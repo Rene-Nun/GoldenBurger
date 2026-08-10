@@ -28,7 +28,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
           {/* Logo + tagline */}
           <div>
-            <div className="relative h-14 w-32">
+            <div className="relative h-20 w-48">
               <Image
                 src="/logo2.PNG"
                 alt="Golden Burger"
