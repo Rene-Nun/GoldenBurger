@@ -41,9 +41,6 @@ export default function Footer() {
                 />
               </div>
             </div>
-            <p className="mt-4 max-w-[220px] text-sm text-white/80">
-              La misma esquina de siempre, desde los 2000.
-            </p>
           </div>
 
           {/* Menú */}
