@@ -28,12 +28,12 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Nivel inferior — franja crema, con el logo montado sobre la costura */}
-      <div className="relative bg-cream">
+      {/* Nivel inferior — franja blanca, con el logo montado sobre la costura */}
+      <div className="relative bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
           {/* Logo: sale de las dos franjas, como un letrero colgante de fonda */}
-          <Link href="/" className="relative z-10 -mt-7 shrink-0 sm:-mt-9">
-            <div className="relative h-20 w-20 sm:h-24 sm:w-24">
+          <Link href="/" className="relative z-10 -mt-9 shrink-0 sm:-mt-11">
+            <div className="relative h-24 w-24 sm:h-32 sm:w-32">
               <Image
                 src="/logo.PNG"
                 alt="Golden Burger"
