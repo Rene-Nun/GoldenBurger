@@ -28,13 +28,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
           {/* Logo + tagline */}
           <div>
-            <div className="relative h-20 w-48">
-              <Image
-                src="/logo2.PNG"
-                alt="Golden Burger"
-                fill
-                className="object-contain object-left"
-              />
+            {/* La caja de layout se queda del tamaño anterior (h-20 w-48) para
+                que la fila del grid no crezca; el logo se renderiza al doble
+                de tamaño encima, con overflow visible. */}
+            <div className="relative h-20 w-48 overflow-visible">
+              <div className="absolute left-0 top-0 h-40 w-96">
+                <Image
+                  src="/logo2.PNG"
+                  alt="Golden Burger"
+                  fill
+                  className="object-contain object-left"
+                />
+              </div>
             </div>
             <p className="mt-4 max-w-[220px] text-sm text-white/80">
               La misma esquina de siempre, desde los 2000.
