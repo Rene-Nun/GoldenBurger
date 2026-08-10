@@ -13,7 +13,7 @@ const config: Config = {
         charcoal: "#171310", // negro cálido, franja superior del header
         ink: "#241C14", // texto principal
         cream: "#F3ECDC", // fondo base, franja inferior del header
-        gold: "#E3A72E", // acento principal — el "Golden" de la marca
+        gold: "#F0C81A", // acento principal — el "Golden" de la marca
         ember: "#C1432A", // acento secundario, rojo ladrillo
       },
       fontFamily: {
