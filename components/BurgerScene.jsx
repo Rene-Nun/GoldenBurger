@@ -2,7 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import { Html, Environment, ContactShadows } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import BurgerModel from "./BurgerModel";
 
 function LoadingFallback() {
@@ -23,33 +23,21 @@ export default function BurgerScene({ explode = 0 }) {
   const frontScale = 1 - explode * 0.42;
   const decoScale = Math.max(0, 1 - explode / 0.3);
 
-  // Mismo paso (dx, dy, dz) entre hamburguesa 1→2 y 2→3, para que el
-  // espaciado se vea parejo en todo el trío.
   const STEP_X = 1.7;
   const STEP_Y = 0.4;
   const STEP_Z = -1.9;
 
   return (
     <Canvas
-      // Cámara mucho más elevada y más cerrada en FOV — mira más hacia
-      // abajo, así se ve más la cara del pan superior.
       camera={{ position: [0, 3.4, 6.4], fov: 26 }}
       dpr={[1, 1.5]}
-      shadows
-      gl={{ toneMappingExposure: 1.1 }}
     >
-      <ambientLight intensity={0.35} />
-      <directionalLight
-        position={[3, 5, 2]}
-        intensity={2.2}
-        castShadow
-        shadow-mapSize={[512, 512]}
-      />
-      <directionalLight position={[-3, 2, -2]} intensity={0.35} />
-      <Environment preset="studio" resolution={128} background={false} />
+      {/* Luces básicas simples, sin Environment ni sombras de contacto */}
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[3, 5, 2]} intensity={1.4} />
+      <directionalLight position={[-3, 2, -2]} intensity={0.4} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa de fondo — mismo paso que 1→2, aplicado dos veces */}
         <group rotation={[-0.1, -0.25, 0]}>
           <BurgerModel
             explode={0}
@@ -59,7 +47,6 @@ export default function BurgerScene({ explode = 0 }) {
           />
         </group>
 
-        {/* Hamburguesa media — un paso desde la de enfrente */}
         <group rotation={[-0.1, -0.15, 0]}>
           <BurgerModel
             explode={0}
@@ -69,7 +56,6 @@ export default function BurgerScene({ explode = 0 }) {
           />
         </group>
 
-        {/* Hamburguesa de enfrente — la única que explota */}
         <group rotation={[-0.1, 0, 0]}>
           <BurgerModel
             explode={explode}
@@ -80,18 +66,6 @@ export default function BurgerScene({ explode = 0 }) {
             position={[frontX, 0, 0]}
           />
         </group>
-
-        {/* Sombra tinte rojo oscuro (no negro puro) para que se vea como
-            si la superficie donde reposan las hamburguesas fuera roja,
-            no una mancha genérica flotando encima del fondo */}
-        <ContactShadows
-          position={[0, -1, 0]}
-          opacity={0.55}
-          scale={10}
-          blur={1.6}
-          far={2.5}
-          color="#5a1613"
-        />
       </Suspense>
     </Canvas>
   );
