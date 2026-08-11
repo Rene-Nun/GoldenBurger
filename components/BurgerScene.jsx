@@ -16,20 +16,22 @@ function LoadingFallback() {
 }
 
 export default function BurgerScene({ explode = 0 }) {
-  // La hamburguesa de enfrente arranca a la derecha (junto a las otras
-  // dos) y viaja hacia el CENTRO exacto de la pantalla — antes terminaba
-  // en x=-1.6, muy a la izquierda; ahora termina en x=0.
-  const FRONT_BASE_X = 1.6;
-  const FRONT_TRAVEL_X = -1.6;
+  // La hamburguesa de enfrente arranca junto a las otras dos y viaja
+  // hacia el centro exacto de la pantalla.
+  const FRONT_BASE_X = 0.9;
+  const FRONT_TRAVEL_X = -0.9;
   const frontX = FRONT_BASE_X + FRONT_TRAVEL_X * explode;
 
-  // Las 2 hamburguesas decorativas se encogen hasta desaparecer en el
-  // primer 30% del scroll, para que solo quede la que explota.
+  // Se encoge conforme explota — la separación de capas crece en altura,
+  // así que sin esto el pan superior se sale de la pantalla al final.
+  const frontScale = 1 - explode * 0.42;
+
+  // Las 2 hamburguesas decorativas se desvanecen en el primer 30% del scroll.
   const decoScale = Math.max(0, 1 - explode / 0.3);
 
   return (
     <Canvas
-      camera={{ position: [0, 0.8, 7], fov: 32 }}
+      camera={{ position: [0, 1.1, 7.5], fov: 30 }}
       dpr={[1, 1.5]}
       shadows
       gl={{ toneMappingExposure: 1.1 }}
@@ -45,32 +47,36 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa de fondo — más a la derecha ahora, se desvanece */}
-        <BurgerModel
-          explode={0}
-          showLabels={false}
-          scale={0.5 * decoScale}
-          position={[3.2, 0.6, -3]}
-          rotation={[0, -0.3, 0]}
-        />
-        {/* Hamburguesa media — se desvanece con el scroll */}
-        <BurgerModel
-          explode={0}
-          showLabels={false}
-          scale={0.7 * decoScale}
-          position={[2.3, 0.3, -1.6]}
-          rotation={[0, -0.2, 0]}
-        />
-        {/* Hamburguesa de enfrente — la única que queda, explota en
-            diagonal y viaja del lado derecho hacia el centro exacto */}
-        <BurgerModel
-          explode={explode}
-          axisX={0.6}
-          axisY={1}
-          showLabels
-          scale={1}
-          position={[frontX, 0, 0]}
-        />
+        {/* Inclinación leve en X en las 3 — simula ángulo de foto de
+            comida visto un poco desde arriba, no de frente plano.
+            Si se ve al revés (como si viéramos por debajo), cambia el
+            signo de -0.18 a 0.18 */}
+        <group rotation={[-0.18, -0.35, 0]}>
+          <BurgerModel
+            explode={0}
+            showLabels={false}
+            scale={0.62 * decoScale}
+            position={[1.9, 0.55, -1.9]}
+          />
+        </group>
+        <group rotation={[-0.18, -0.22, 0]}>
+          <BurgerModel
+            explode={0}
+            showLabels={false}
+            scale={0.8 * decoScale}
+            position={[1.3, 0.35, -0.9]}
+          />
+        </group>
+        <group rotation={[-0.18, 0, 0]}>
+          <BurgerModel
+            explode={explode}
+            axisX={0.6}
+            axisY={1}
+            showLabels
+            scale={frontScale}
+            position={[frontX, 0, 0]}
+          />
+        </group>
 
         <ContactShadows
           position={[0, -1, 0]}
