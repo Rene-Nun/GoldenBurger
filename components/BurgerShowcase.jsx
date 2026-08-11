@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Component, useEffect, useRef, useState } from "react";
+import { NODES } from "./BurgerModel";
 
 const BurgerScene = dynamic(() => import("./BurgerScene"), { ssr: false });
 
@@ -61,7 +62,6 @@ export default function BurgerShowcase() {
   return (
     <section ref={containerRef} className="relative h-[300vh]">
       <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden bg-black">
-        {/* Título + subtítulo + CTA — ajusta el copy a lo que necesites */}
         <div className="z-10 flex flex-col items-center gap-6 px-6 text-center">
           <h1 className="font-display text-4xl uppercase tracking-tight text-white sm:text-6xl">
             No cambió
@@ -71,17 +71,26 @@ export default function BurgerShowcase() {
             mismo mostrador, la misma esquina de siempre.
           </p>
 
-          {/* Recuadro CONTENIDO donde vive el modelo 3D — chico, centrado,
-              con tamaño fijo para que la explosión de capas nunca se salga */}
           <div className="relative h-[280px] w-[280px] sm:h-[380px] sm:w-[380px]">
             <ErrorBoundary>
               <BurgerScene explode={explode} />
             </ErrorBoundary>
           </div>
+        </div>
 
-          <button className="rounded-full border border-white/30 px-8 py-3 font-display text-xs uppercase tracking-[0.25em] text-white transition hover:bg-white hover:text-black">
-            Ver menú
-          </button>
+        {/* LEYENDA DE DEBUG — lista fija en HTML normal, nunca se corta.
+            Quitar este bloque completo cuando terminemos de identificar
+            los nodos. */}
+        <div className="absolute bottom-24 left-1/2 z-20 flex -translate-x-1/2 flex-col gap-1 rounded-lg bg-white/10 p-3 backdrop-blur">
+          {NODES.map((item) => (
+            <div key={item.node} className="flex items-center gap-2 text-xs text-white">
+              <span
+                className="h-3 w-3 rounded-sm"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="font-mono">{item.node}</span>
+            </div>
+          ))}
         </div>
 
         <p className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 font-display text-xs uppercase tracking-[0.3em] text-white/40">
