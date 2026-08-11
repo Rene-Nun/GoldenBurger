@@ -57,7 +57,7 @@ export default function BurgerScene({ explode = 0 }) {
         </group>
 
         {/* Hamburguesa de enfrente — la que explota */}
-        <group rotation={[-0.15, 0.3, 0]}>
+        <group rotation={[-0.15, -0.3, 0]}>
           <BurgerModel
             explode={explode}
             axisX={0.6}
