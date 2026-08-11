@@ -3,6 +3,8 @@ import BurgerShowcase from "@/components/BurgerShowcase";
 export default function Home() {
   return (
     <>
+      <BurgerShowcase />
+
       <section className="mx-auto max-w-6xl px-6 py-20 text-center sm:py-28">
         <p className="font-display text-sm uppercase tracking-[0.3em] text-ember">
           Desde los 2000 · Tu esquina de siempre
@@ -17,8 +19,6 @@ export default function Home() {
           mismo mostrador, la misma esquina de siempre.
         </p>
       </section>
-
-      <BurgerShowcase />
     </>
   );
 }
