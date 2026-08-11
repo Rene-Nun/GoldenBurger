@@ -16,8 +16,8 @@ function LoadingFallback() {
 }
 
 export default function BurgerScene({ explode = 0 }) {
-  const FRONT_BASE_X = 0.7;
-  const FRONT_TRAVEL_X = -0.7;
+  const FRONT_BASE_X = 1.3;
+  const FRONT_TRAVEL_X = -1.3;
   const frontX = FRONT_BASE_X + FRONT_TRAVEL_X * explode;
 
   const frontScale = 1 - explode * 0.42;
@@ -37,19 +37,20 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa IZQUIERDA — rotación en Z (tercer valor) inclina
-            en diagonal hacia su izquierda, como recostada */}
-        <group rotation={[-0.15, 0, -0.25]}>
+        {/* Hamburguesa IZQUIERDA — signo corregido: rotación Z positiva
+            la inclina hacia SU izquierda */}
+        <group rotation={[-0.15, 0, 0.25]}>
           <BurgerModel
             explode={0}
             showLabels={false}
             scale={0.92 * decoScale * SIZE}
-            position={[-0.7, 0, 0]}
+            position={[-1.3, 0, 0]}
           />
         </group>
 
-        {/* Hamburguesa DERECHA — rotación en Z inclina hacia su derecha */}
-        <group rotation={[-0.15, 0, 0.25]}>
+        {/* Hamburguesa DERECHA — rotación Z negativa la inclina hacia
+            SU derecha */}
+        <group rotation={[-0.15, 0, -0.25]}>
           <BurgerModel
             explode={explode}
             axisX={0.6}
