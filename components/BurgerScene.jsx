@@ -16,10 +16,16 @@ function LoadingFallback() {
 }
 
 export default function BurgerScene({ explode = 0 }) {
-  // La hamburguesa de enfrente, además de explotar sus capas, también
-  // "viaja" hacia el centro/izquierda de la pantalla conforme avanza el
-  // scroll — así cruza el layout, no se queda quieta en su sitio.
-  const frontTravelX = -1.8 * explode;
+  // La hamburguesa de enfrente arranca a la derecha (junto a las otras
+  // dos) y viaja hacia el CENTRO exacto de la pantalla — antes terminaba
+  // en x=-1.6, muy a la izquierda; ahora termina en x=0.
+  const FRONT_BASE_X = 1.6;
+  const FRONT_TRAVEL_X = -1.6;
+  const frontX = FRONT_BASE_X + FRONT_TRAVEL_X * explode;
+
+  // Las 2 hamburguesas decorativas se encogen hasta desaparecer en el
+  // primer 30% del scroll, para que solo quede la que explota.
+  const decoScale = Math.max(0, 1 - explode / 0.3);
 
   return (
     <Canvas
@@ -39,31 +45,31 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa de fondo — más chica y atrás, nunca explota */}
+        {/* Hamburguesa de fondo — más a la derecha ahora, se desvanece */}
         <BurgerModel
           explode={0}
           showLabels={false}
-          scale={0.5}
-          position={[2.4, 0.6, -3]}
+          scale={0.5 * decoScale}
+          position={[3.2, 0.6, -3]}
           rotation={[0, -0.3, 0]}
         />
-        {/* Hamburguesa media — tamaño intermedio, nunca explota */}
+        {/* Hamburguesa media — se desvanece con el scroll */}
         <BurgerModel
           explode={0}
           showLabels={false}
-          scale={0.7}
-          position={[1.4, 0.3, -1.6]}
+          scale={0.7 * decoScale}
+          position={[2.3, 0.3, -1.6]}
           rotation={[0, -0.2, 0]}
         />
-        {/* Hamburguesa de enfrente — la única que explota, en diagonal,
-            y viaja hacia el centro de la pantalla */}
+        {/* Hamburguesa de enfrente — la única que queda, explota en
+            diagonal y viaja del lado derecho hacia el centro exacto */}
         <BurgerModel
           explode={explode}
           axisX={0.6}
           axisY={1}
           showLabels
           scale={1}
-          position={[0.2 + frontTravelX, 0, 0]}
+          position={[frontX, 0, 0]}
         />
 
         <ContactShadows
