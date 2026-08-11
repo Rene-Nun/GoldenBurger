@@ -58,9 +58,6 @@ export default function BurgerShowcase() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Título, subtítulo y CTA desaparecen rápido, en el primer 15% del
-  // scroll — así el usuario ve el hero completo al cargar, y en cuanto
-  // empieza a deslizar, todo se despeja excepto la hamburguesa.
   const TEXT_FADE_THRESHOLD = 0.15;
   const textOpacity = Math.max(0, 1 - explode / TEXT_FADE_THRESHOLD);
   const textTranslateY = -explode * 40;
@@ -68,9 +65,19 @@ export default function BurgerShowcase() {
   return (
     <section ref={containerRef} className="relative h-[300vh]">
       <div className="sticky top-0 h-screen overflow-hidden bg-black">
-        <div className="mx-auto flex h-full max-w-6xl flex-col items-center px-6 sm:grid sm:grid-cols-2 sm:items-center">
+        {/* Franja diagonal roja de fondo — ajusta los porcentajes del
+            clip-path si quieres mover el ángulo o dónde empieza/termina */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            backgroundColor: "#BD2F29",
+            clipPath: "polygon(38% 0%, 100% 0%, 100% 100%, 22% 100%)",
+          }}
+        />
+
+        <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col items-center px-6 sm:grid sm:grid-cols-2 sm:items-center">
           <div
-            className="z-10 flex flex-col items-start gap-6 pt-16 text-left sm:pt-0"
+            className="flex flex-col items-start gap-6 pt-16 text-left sm:pt-0"
             style={{
               opacity: textOpacity,
               transform: `translateY(${textTranslateY}px)`,
@@ -86,16 +93,22 @@ export default function BurgerShowcase() {
               Sabor original y sin igual — la misma receta, el mismo fuego,
               capa por capa.
             </p>
-            <button className="rounded-full bg-ember px-8 py-3 font-display text-xs uppercase tracking-[0.25em] text-white transition hover:bg-ember/90">
+            <button
+              className="rounded-full px-8 py-3 font-display text-xs uppercase tracking-[0.25em] text-white transition hover:opacity-90"
+              style={{ backgroundColor: "#BD2F29" }}
+            >
               Menú completo
             </button>
           </div>
+        </div>
 
-          <div className="pointer-events-none absolute inset-0 z-0">
-            <ErrorBoundary>
-              <BurgerScene explode={explode} />
-            </ErrorBoundary>
-          </div>
+        {/* Canvas 3D — va después de la franja en el DOM para quedar
+            visualmente encima (fondo transparente, se ve la franja
+            alrededor del modelo) */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <ErrorBoundary>
+            <BurgerScene explode={explode} />
+          </ErrorBoundary>
         </div>
 
         <p
