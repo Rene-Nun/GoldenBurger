@@ -47,7 +47,7 @@ export default function BurgerScene({ explode = 0 }) {
       <Suspense fallback={<LoadingFallback />}>
         {/* Hamburguesa de fondo — misma posición/rotación relativa,
             solo escalada más chica */}
-        <group rotation={[-0.15, -0.2, 0]}>
+        <group rotation={[-0.15, -0.1, 0]}>
           <BurgerModel
             explode={0}
             showLabels={false}
@@ -57,7 +57,7 @@ export default function BurgerScene({ explode = 0 }) {
         </group>
 
         {/* Hamburguesa de enfrente — la que explota */}
-        <group rotation={[-0.15, -0.2, 0]}>
+        <group rotation={[-0.15, -0.1, 0]}>
           <BurgerModel
             explode={explode}
             axisX={0.6}
