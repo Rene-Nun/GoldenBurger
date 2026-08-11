@@ -3,8 +3,6 @@
 import dynamic from "next/dynamic";
 import { Component, useEffect, useRef, useState } from "react";
 
-// El Canvas de three.js solo debe existir en el navegador — dynamic +
-// ssr:false evita que Next.js intente renderizarlo en el servidor.
 const BurgerScene = dynamic(() => import("./BurgerScene"), { ssr: false });
 
 class ErrorBoundary extends Component {
@@ -68,16 +66,17 @@ export default function BurgerShowcase() {
   }, []);
 
   return (
-    // h-[300vh]: tres pantallas de alto de "scroll recorrido" para que la
-    // explosión tenga espacio de sobra para sentirse gradual, no brusca.
-    // Ajusta este número si quieres el efecto más rápido o más lento.
     <section ref={containerRef} className="relative h-[300vh]">
-      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden bg-cream">
-        <ErrorBoundary>
-          <BurgerScene explode={explode} />
-        </ErrorBoundary>
+      <div className="sticky top-0 h-screen overflow-hidden bg-cream">
+        {/* Contenedor con tamaño explícito para el Canvas — sin esto,
+            el Canvas queda con altura 0 dentro de un flex-col sin flex-1 */}
+        <div className="absolute inset-0">
+          <ErrorBoundary>
+            <BurgerScene explode={explode} />
+          </ErrorBoundary>
+        </div>
 
-        <p className="absolute bottom-10 font-display text-sm uppercase tracking-[0.3em] text-ink/50">
+        <p className="absolute bottom-10 left-1/2 -translate-x-1/2 font-display text-sm uppercase tracking-[0.3em] text-ink/50">
           {explode < 0.05
             ? "Desliza para ver qué lleva dentro"
             : "Ingrediente por ingrediente, como siempre"}
