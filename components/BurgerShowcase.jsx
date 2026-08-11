@@ -58,14 +58,25 @@ export default function BurgerShowcase() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Título, subtítulo y CTA desaparecen rápido, en el primer 15% del
+  // scroll — así el usuario ve el hero completo al cargar, y en cuanto
+  // empieza a deslizar, todo se despeja excepto la hamburguesa.
+  const TEXT_FADE_THRESHOLD = 0.15;
+  const textOpacity = Math.max(0, 1 - explode / TEXT_FADE_THRESHOLD);
+  const textTranslateY = -explode * 40;
+
   return (
     <section ref={containerRef} className="relative h-[300vh]">
       <div className="sticky top-0 h-screen overflow-hidden bg-black">
-        {/* Grid de 2 columnas: texto a la izquierda, canvas a la derecha
-            ocupando el resto del ancho — en mobile se apila (texto arriba,
-            canvas abajo, ambos a ancho completo) */}
         <div className="mx-auto flex h-full max-w-6xl flex-col items-center px-6 sm:grid sm:grid-cols-2 sm:items-center">
-          <div className="z-10 flex flex-col items-start gap-6 pt-16 text-left sm:pt-0">
+          <div
+            className="z-10 flex flex-col items-start gap-6 pt-16 text-left sm:pt-0"
+            style={{
+              opacity: textOpacity,
+              transform: `translateY(${textTranslateY}px)`,
+              transition: "opacity 0.1s linear, transform 0.1s linear",
+            }}
+          >
             <h2 className="font-display text-4xl uppercase tracking-tight text-white sm:text-6xl">
               Al carbón,
               <br />
@@ -75,15 +86,11 @@ export default function BurgerShowcase() {
               Sabor original y sin igual — la misma receta, el mismo fuego,
               capa por capa.
             </p>
-            <button className="rounded-full border border-ember px-8 py-3 font-display text-xs uppercase tracking-[0.25em] text-ember transition hover:bg-ember hover:text-black">
+            <button className="rounded-full bg-ember px-8 py-3 font-display text-xs uppercase tracking-[0.25em] text-white transition hover:bg-ember/90">
               Menú completo
             </button>
           </div>
 
-          {/* El canvas se sale del grid a propósito (col-span completo,
-              posición absoluta) para que la diagonal de la explosión pueda
-              cruzar libremente hacia el centro/izquierda de la pantalla
-              sin quedar recortada por la columna de la derecha */}
           <div className="pointer-events-none absolute inset-0 z-0">
             <ErrorBoundary>
               <BurgerScene explode={explode} />
@@ -91,10 +98,11 @@ export default function BurgerShowcase() {
           </div>
         </div>
 
-        <p className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 font-display text-xs uppercase tracking-[0.3em] text-white/40">
-          {explode < 0.05
-            ? "Desliza para ver qué lleva dentro"
-            : "Ingrediente por ingrediente, como siempre"}
+        <p
+          className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 font-display text-xs uppercase tracking-[0.3em] text-white/40"
+          style={{ opacity: textOpacity, transition: "opacity 0.1s linear" }}
+        >
+          Desliza para ver qué lleva dentro
         </p>
       </div>
     </section>
