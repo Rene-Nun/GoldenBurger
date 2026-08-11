@@ -16,8 +16,8 @@ function LoadingFallback() {
 }
 
 export default function BurgerScene({ explode = 0 }) {
-  const FRONT_BASE_X = 1;
-  const FRONT_TRAVEL_X = -1;
+  const FRONT_BASE_X = 0.6;
+  const FRONT_TRAVEL_X = -0.6;
   const frontX = FRONT_BASE_X + FRONT_TRAVEL_X * explode;
 
   const frontScale = 1 - explode * 0.42;
@@ -25,7 +25,9 @@ export default function BurgerScene({ explode = 0 }) {
 
   return (
     <Canvas
-      camera={{ position: [0, 3.4, 6.4], fov: 26 }}
+      // Aún más elevada que antes: mira bastante hacia abajo, para ver
+      // de lleno la cara superior del pan, como en la referencia.
+      camera={{ position: [0, 4.6, 6.2], fov: 24 }}
       dpr={[1, 1.5]}
       shadows
       gl={{ toneMappingExposure: 1.1 }}
@@ -41,30 +43,20 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa de fondo — más compacta que antes, dentro de
-            cámara, escalón parejo respecto a la media */}
-        <group rotation={[-0.1, -0.3, 0]}>
+        {/* Hamburguesa de fondo — casi mismo tamaño, ligeramente atrás
+            y a la derecha, muy traslapada con la de enfrente, como en
+            la referencia (no en diagonal alejándose) */}
+        <group rotation={[-0.15, -0.12, 0]}>
           <BurgerModel
             explode={0}
             showLabels={false}
-            scale={0.6 * decoScale}
-            position={[2.6, 0.7, -3]}
+            scale={0.92 * decoScale}
+            position={[0.9, 0.15, -0.5]}
           />
         </group>
 
-        {/* Hamburguesa media — mismo paso desde la de fondo que desde
-            la de enfrente */}
-        <group rotation={[-0.1, -0.18, 0]}>
-          <BurgerModel
-            explode={0}
-            showLabels={false}
-            scale={0.8 * decoScale}
-            position={[1.8, 0.4, -1.5]}
-          />
-        </group>
-
-        {/* Hamburguesa de enfrente — la única que explota */}
-        <group rotation={[-0.1, 0, 0]}>
+        {/* Hamburguesa de enfrente — la que explota */}
+        <group rotation={[-0.15, 0, 0]}>
           <BurgerModel
             explode={explode}
             axisX={0.6}
