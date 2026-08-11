@@ -1,17 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
-/**
- * Orden de apilado real (calculado desde las posiciones Y del .glb, de
- * abajo hacia arriba) y confirmado visualmente con el render en
- * gltf.report: pan inferior, carne, queso, salsa, cebolla, jitomate,
- * lechuga, pan superior — 8 capas, coincide exacto con las 8 mallas.
- * Si al probarlo ves que dos capas están cambiadas (p. ej. salsa/cebolla),
- * solo hay que intercambiar esas dos líneas de orden, el resto no se toca.
- */
 const LAYERS = [
   { node: "root.0.1", name: "pan inferior", offset: -1.4 },
   { node: "root.0.5", name: "carne", offset: -1.0 },
@@ -27,7 +19,6 @@ export default function BurgerModel({ explode = 0, ...props }) {
   const { nodes, materials } = useGLTF("/models/burger.glb");
   const group = useRef();
 
-  // Interpola suavemente hacia el offset objetivo en vez de saltar de golpe
   useFrame(() => {
     if (!group.current) return;
     group.current.children.forEach((child, i) => {
@@ -38,8 +29,36 @@ export default function BurgerModel({ explode = 0, ...props }) {
     });
   });
 
+  // --- DEBUG TEMPORAL: imprime en pantalla los nombres reales de nodos ---
+  const nodeKeys = Object.keys(nodes);
+  const materialKeys = Object.keys(materials);
+
   return (
     <group ref={group} {...props} dispose={null}>
+      <Html center>
+        <div
+          style={{
+            background: "white",
+            color: "black",
+            padding: "12px 16px",
+            borderRadius: 8,
+            fontSize: 11,
+            fontFamily: "monospace",
+            maxWidth: "80vw",
+            whiteSpace: "pre-wrap",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+          }}
+        >
+          <strong>NODOS ({nodeKeys.length}):</strong>
+          {"\n"}
+          {nodeKeys.join("\n")}
+          {"\n\n"}
+          <strong>MATERIALES ({materialKeys.length}):</strong>
+          {"\n"}
+          {materialKeys.join("\n")}
+        </div>
+      </Html>
+
       {LAYERS.map(({ node }, i) => {
         const meshNode = nodes[node];
         if (!meshNode) return null;
