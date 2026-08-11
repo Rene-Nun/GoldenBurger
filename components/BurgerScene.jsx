@@ -23,10 +23,12 @@ export default function BurgerScene({ explode = 0 }) {
   const frontScale = 1 - explode * 0.42;
   const decoScale = Math.max(0, 1 - explode / 0.3);
 
+  // Multiplicador global de tamaño — no toca posición ni rotación,
+  // solo achica ambos modelos para que quepan mejor en pantalla.
+  const SIZE = 0.7;
+
   return (
     <Canvas
-      // Aún más elevada que antes: mira bastante hacia abajo, para ver
-      // de lleno la cara superior del pan, como en la referencia.
       camera={{ position: [0, 5.0, 6.2], fov: 24 }}
       dpr={[1, 1.5]}
       shadows
@@ -43,14 +45,13 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa de fondo — casi mismo tamaño, ligeramente atrás
-            y a la derecha, muy traslapada con la de enfrente, como en
-            la referencia (no en diagonal alejándose) */}
+        {/* Hamburguesa de fondo — misma posición/rotación relativa,
+            solo escalada más chica */}
         <group rotation={[-0.15, -0.12, 0]}>
           <BurgerModel
             explode={0}
             showLabels={false}
-            scale={0.92 * decoScale}
+            scale={0.92 * decoScale * SIZE}
             position={[1.9, 0.15, -0.5]}
           />
         </group>
@@ -62,7 +63,7 @@ export default function BurgerScene({ explode = 0 }) {
             axisX={0.6}
             axisY={1}
             showLabels
-            scale={frontScale}
+            scale={frontScale * SIZE}
             position={[frontX, 0, 0]}
           />
         </group>
