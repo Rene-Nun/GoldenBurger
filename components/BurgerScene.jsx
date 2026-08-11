@@ -18,14 +18,20 @@ function LoadingFallback() {
 export default function BurgerScene({ explode = 0 }) {
   const SCENE_OFFSET_X = 1.1;
 
-  // La IZQUIERDA es ahora la de enfrente, la que responde al scroll.
   const FRONT_BASE_X = SCENE_OFFSET_X - 0.6;
   const FRONT_TRAVEL_X = -0.6;
   const frontX = FRONT_BASE_X + FRONT_TRAVEL_X * explode;
 
-  const frontScale = 1 - explode * 0.42;
+  // Tamaño base más grande que antes (era 0.8), sigue encogiendo un poco
+  // al explotar para no salirse de pantalla.
+  const FRONT_SIZE = 1.05;
+  const frontScale = FRONT_SIZE - explode * 0.35;
 
-  const SIZE = 0.8;
+  // La de la derecha ahora sí desaparece con el scroll, encogiéndose
+  // a 0 en el primer 30% del recorrido.
+  const BACK_SIZE = 0.8;
+  const decoScale = Math.max(0, 1 - explode / 0.3);
+  const backScale = BACK_SIZE * decoScale;
 
   return (
     <Canvas
@@ -39,26 +45,24 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa IZQUIERDA — al FRENTE (z más alto = más cerca
-            de cámara), la que explota y responde al scroll */}
+        {/* Izquierda — al frente, la que explota */}
         <group rotation={[-0.15, 0, 0.25]}>
           <BurgerModel
             explode={explode}
             axisX={0.6}
             axisY={1}
             showLabels
-            scale={frontScale * SIZE}
+            scale={frontScale}
             position={[frontX, 0, 0.6]}
           />
         </group>
 
-        {/* Hamburguesa DERECHA — mismo tamaño base (sin encoger),
-            detrás en Z para que no se mezcle con la de enfrente */}
+        {/* Derecha — decorativa, ahora desaparece con el scroll */}
         <group rotation={[-0.15, 0, -0.25]}>
           <BurgerModel
             explode={0}
             showLabels={false}
-            scale={SIZE}
+            scale={backScale}
             position={[SCENE_OFFSET_X + 0.6, 0, -0.6]}
           />
         </group>
