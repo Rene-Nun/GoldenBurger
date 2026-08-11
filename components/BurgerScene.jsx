@@ -16,7 +16,7 @@ function LoadingFallback() {
 }
 
 export default function BurgerScene({ explode = 0 }) {
-  const SCENE_OFFSET_X = 0.9;
+  const SCENE_OFFSET_X = 1.1;
 
   // La IZQUIERDA es ahora la de enfrente, la que responde al scroll.
   const FRONT_BASE_X = SCENE_OFFSET_X - 0.6;
