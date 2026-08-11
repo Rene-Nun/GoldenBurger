@@ -39,13 +39,6 @@ const GROUPS = [
   },
 ];
 
-/**
- * axisX/axisY controlan la dirección de la explosión:
- * - axisY alto, axisX en 0 = solo vertical (como antes)
- * - axisX y axisY ambos activos = diagonal (lo que pediste ahora)
- * showLabels: false para las hamburguesas decorativas de fondo, que
- * nunca explotan y no necesitan etiquetas de ingrediente.
- */
 export default function BurgerModel({
   explode = 0,
   axisX = 0.6,
@@ -73,36 +66,48 @@ export default function BurgerModel({
 
   return (
     <group {...props} dispose={null}>
-      {GROUPS.map((group, i) => (
-        <group key={group.name} ref={(el) => (groupRefs.current[i] = el)}>
-          {group.parts.map(({ node, material }) => {
-            const meshNode = nodes[node];
-            if (!meshNode) return null;
-            return (
-              <mesh
-                key={node}
-                geometry={meshNode.geometry}
-                material={materials[material] ?? meshNode.material}
-                castShadow
-                receiveShadow
-              />
-            );
-          })}
-          {labelOpacity > 0.01 && (
-            <Html position={[1.2, 0, 0]} center={false} style={{ pointerEvents: "none" }}>
-              <div
-                className="flex items-center gap-2 whitespace-nowrap"
-                style={{ opacity: labelOpacity, transition: "opacity 0.2s linear" }}
-              >
-                <span className="h-px w-8 bg-white/40" />
-                <span className="font-display text-xs uppercase tracking-[0.2em] text-white/70">
-                  {group.name}
-                </span>
-              </div>
-            </Html>
-          )}
-        </group>
-      ))}
+      {GROUPS.map((group, i) => {
+        // Alterna lado: índices pares a la derecha, impares a la izquierda
+        const isRight = i % 2 === 0;
+        return (
+          <group key={group.name} ref={(el) => (groupRefs.current[i] = el)}>
+            {group.parts.map(({ node, material }) => {
+              const meshNode = nodes[node];
+              if (!meshNode) return null;
+              return (
+                <mesh
+                  key={node}
+                  geometry={meshNode.geometry}
+                  material={materials[material] ?? meshNode.material}
+                />
+              );
+            })}
+            {labelOpacity > 0.01 && (
+              // Anclado en el centro exacto del mesh (sin offset 3D) —
+              // el desplazamiento izq/der se hace con CSS, así la altura
+              // proyectada siempre es exacta sin importar rotaciones.
+              <Html center={false} style={{ pointerEvents: "none" }}>
+                <div
+                  className="flex items-center gap-2 whitespace-nowrap"
+                  style={{
+                    opacity: labelOpacity,
+                    transition: "opacity 0.2s linear",
+                    transform: isRight
+                      ? "translate(24px, -50%)"
+                      : "translate(calc(-100% - 24px), -50%)",
+                    flexDirection: isRight ? "row" : "row-reverse",
+                  }}
+                >
+                  <span className="h-px w-8 bg-white/40" />
+                  <span className="font-display text-xs uppercase tracking-[0.2em] text-white/70">
+                    {group.name}
+                  </span>
+                </div>
+              </Html>
+            )}
+          </group>
+        );
+      })}
     </group>
   );
 }
