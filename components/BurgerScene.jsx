@@ -16,8 +16,13 @@ function LoadingFallback() {
 }
 
 export default function BurgerScene({ explode = 0 }) {
-  const FRONT_BASE_X = 1.3;
-  const FRONT_TRAVEL_X = -1.3;
+  // Desplaza TODO el par de hamburguesas hacia la derecha de la pantalla,
+  // para que quede en su columna del hero en vez de centrado en toda
+  // la sección. Sube este número si las quieres aún más a la derecha.
+  const SCENE_OFFSET_X = 2.2;
+
+  const FRONT_BASE_X = SCENE_OFFSET_X + 0.7;
+  const FRONT_TRAVEL_X = -0.7;
   const frontX = FRONT_BASE_X + FRONT_TRAVEL_X * explode;
 
   const frontScale = 1 - explode * 0.42;
@@ -37,19 +42,18 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa IZQUIERDA — signo corregido: rotación Z positiva
-            la inclina hacia SU izquierda */}
+        {/* Hamburguesa IZQUIERDA — vuelta a estar junta a la de la
+            derecha, ambas desplazadas hacia el lado derecho de pantalla */}
         <group rotation={[-0.15, 0, 0.25]}>
           <BurgerModel
             explode={0}
             showLabels={false}
             scale={0.92 * decoScale * SIZE}
-            position={[-1.3, 0, 0]}
+            position={[SCENE_OFFSET_X - 0.7, 0, 0]}
           />
         </group>
 
-        {/* Hamburguesa DERECHA — rotación Z negativa la inclina hacia
-            SU derecha */}
+        {/* Hamburguesa DERECHA — la que explota */}
         <group rotation={[-0.15, 0, -0.25]}>
           <BurgerModel
             explode={explode}
