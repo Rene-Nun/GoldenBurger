@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { Component, useEffect, useRef, useState } from "react";
-import { NODES } from "./BurgerModel";
 
 const BurgerScene = dynamic(() => import("./BurgerScene"), { ssr: false });
 
@@ -76,21 +75,10 @@ export default function BurgerShowcase() {
               <BurgerScene explode={explode} />
             </ErrorBoundary>
           </div>
-        </div>
 
-        {/* LEYENDA DE DEBUG — lista fija en HTML normal, nunca se corta.
-            Quitar este bloque completo cuando terminemos de identificar
-            los nodos. */}
-        <div className="absolute bottom-24 left-1/2 z-20 flex -translate-x-1/2 flex-col gap-1 rounded-lg bg-white/10 p-3 backdrop-blur">
-          {NODES.map((item) => (
-            <div key={item.node} className="flex items-center gap-2 text-xs text-white">
-              <span
-                className="h-3 w-3 rounded-sm"
-                style={{ backgroundColor: item.color }}
-              />
-              <span className="font-mono">{item.node}</span>
-            </div>
-          ))}
+          <button className="rounded-full border border-white/30 px-8 py-3 font-display text-xs uppercase tracking-[0.25em] text-white transition hover:bg-white hover:text-black">
+            Ver menú
+          </button>
         </div>
 
         <p className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 font-display text-xs uppercase tracking-[0.3em] text-white/40">
