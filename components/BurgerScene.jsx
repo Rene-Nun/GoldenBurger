@@ -19,7 +19,7 @@ export default function BurgerScene({ explode = 0 }) {
   // Desplaza TODO el par de hamburguesas hacia la derecha de la pantalla,
   // para que quede en su columna del hero en vez de centrado en toda
   // la sección. Sube este número si las quieres aún más a la derecha.
-  const SCENE_OFFSET_X = 2.2;
+  const SCENE_OFFSET_X = 0.9;
 
   const FRONT_BASE_X = SCENE_OFFSET_X + 0.7;
   const FRONT_TRAVEL_X = -0.7;
