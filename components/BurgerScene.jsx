@@ -27,7 +27,7 @@ export default function BurgerScene({ explode = 0 }) {
     <Canvas
       // Aún más elevada que antes: mira bastante hacia abajo, para ver
       // de lleno la cara superior del pan, como en la referencia.
-      camera={{ position: [0, 4.6, 6.2], fov: 24 }}
+      camera={{ position: [0, 5.0, 6.2], fov: 24 }}
       dpr={[1, 1.5]}
       shadows
       gl={{ toneMappingExposure: 1.1 }}
@@ -51,7 +51,7 @@ export default function BurgerScene({ explode = 0 }) {
             explode={0}
             showLabels={false}
             scale={0.92 * decoScale}
-            position={[0.9, 0.15, -0.5]}
+            position={[1.9, 0.15, -0.5]}
           />
         </group>
 
