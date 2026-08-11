@@ -1,22 +1,14 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Suspense, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Suspense } from "react";
 import { Html, Environment, ContactShadows } from "@react-three/drei";
 import BurgerModel from "./BurgerModel";
-
-function SpinningRig({ children }) {
-  const ref = useRef();
-  useFrame((_, delta) => {
-    if (ref.current) ref.current.rotation.y += delta * 0.15;
-  });
-  return <group ref={ref}>{children}</group>;
-}
 
 function LoadingFallback() {
   return (
     <Html center>
-      <p className="whitespace-nowrap font-display text-sm uppercase tracking-[0.3em] text-ink/50">
+      <p className="whitespace-nowrap font-display text-sm uppercase tracking-[0.3em] text-white/50">
         Cargando…
       </p>
     </Html>
@@ -26,43 +18,33 @@ function LoadingFallback() {
 export default function BurgerScene({ explode = 0 }) {
   return (
     <Canvas
-      camera={{ position: [0, 1.2, 5], fov: 35 }}
-      dpr={[1, 2]}
+      camera={{ position: [0, 1.1, 6], fov: 30 }}
+      dpr={[1, 1.5]}
       shadows
       gl={{ toneMappingExposure: 1.1 }}
     >
-      {/* Luz ambiental suave, muy baja — la mayoría del "look realista"
-          viene del Environment de abajo, no de luces planas */}
-      <ambientLight intensity={0.3} />
-
-      {/* Luz principal tipo "key light" de fotografía de producto,
-          con sombra activada para que se vea el contacto con la mesa */}
+      <ambientLight intensity={0.35} />
       <directionalLight
         position={[3, 5, 2]}
-        intensity={2}
+        intensity={2.2}
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[512, 512]}
       />
-      {/* Luz de relleno tenue del lado opuesto, sin sombra, solo para
-          que el lado oscuro no se vea negro puro */}
-      <directionalLight position={[-3, 2, -2]} intensity={0.3} />
+      <directionalLight position={[-3, 2, -2]} intensity={0.35} />
 
-      {/* Simula un entorno de estudio fotográfico — esto es lo que le da
-          reflejos realistas al pan, al queso derretido, etc. "city" da un
-          ambiente neutro cálido; prueba también "apartment" o "studio" */}
-      <Environment preset="city" />
+      {/* resolution baja + sin fondo visible: mismo look de estudio,
+          pero mucho más ligero — el HDR completo era lo que probablemente
+          crasheaba Safari en iPad */}
+      <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        <SpinningRig>
-          <BurgerModel explode={explode} scale={1.2} position={[0, -0.5, 0]} />
-        </SpinningRig>
-        {/* Sombra suave de contacto — ancla visualmente el modelo a una
-            "mesa" invisible, evita que se sienta flotando en el vacío */}
+        {/* Sin SpinningRig — el modelo ya no rota, queda estático */}
+        <BurgerModel explode={explode} scale={0.9} position={[0, -0.4, 0]} />
         <ContactShadows
-          position={[0, -1.1, 0]}
-          opacity={0.4}
-          scale={6}
-          blur={2.5}
+          position={[0, -0.9, 0]}
+          opacity={0.5}
+          scale={5}
+          blur={2.2}
           far={2}
         />
       </Suspense>
