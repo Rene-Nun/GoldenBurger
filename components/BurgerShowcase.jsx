@@ -20,10 +20,10 @@ class ErrorBoundary extends Component {
     if (this.state.error) {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-center">
-          <p className="font-display text-sm uppercase tracking-[0.2em] text-ink/70">
+          <p className="font-display text-sm uppercase tracking-[0.2em] text-white/70">
             No se pudo cargar el modelo 3D
           </p>
-          <p className="max-w-sm text-xs text-ink/40">{this.state.error.message}</p>
+          <p className="max-w-sm text-xs text-white/40">{this.state.error.message}</p>
         </div>
       );
     }
@@ -58,42 +58,33 @@ export default function BurgerShowcase() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // El texto del hero desaparece rápido, en el primer 12% del scroll —
-  // así el usuario apenas empieza a deslizar y ya siente que "abrió" algo.
-  const HERO_FADE_THRESHOLD = 0.12;
-  const heroOpacity = Math.max(0, 1 - explode / HERO_FADE_THRESHOLD);
-  const heroTranslateY = -explode * 60; // sube y se desvanece, no solo fade plano
-
   return (
     <section ref={containerRef} className="relative h-[300vh]">
-      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden bg-cream">
-        {/* Texto del hero — reemplaza este contenido por el copy real */}
-        <div
-          className="pointer-events-none absolute top-16 z-10 flex flex-col items-center gap-4 px-6 text-center"
-          style={{
-            opacity: heroOpacity,
-            transform: `translateY(${heroTranslateY}px)`,
-            transition: "opacity 0.1s linear, transform 0.1s linear",
-          }}
-        >
-          <h1 className="font-display text-5xl uppercase tracking-tight text-ink sm:text-7xl">
+      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden bg-black">
+        {/* Título + subtítulo + CTA — ajusta el copy a lo que necesites */}
+        <div className="z-10 flex flex-col items-center gap-6 px-6 text-center">
+          <h1 className="font-display text-4xl uppercase tracking-tight text-white sm:text-6xl">
             No cambió
           </h1>
-          <p className="max-w-md font-body text-base text-ink/60 sm:text-lg">
+          <p className="max-w-md font-body text-sm text-white/60 sm:text-base">
             Golden Burger vuelve tal como la recordabas: la misma sazón, el
             mismo mostrador, la misma esquina de siempre.
           </p>
+
+          {/* Recuadro CONTENIDO donde vive el modelo 3D — chico, centrado,
+              con tamaño fijo para que la explosión de capas nunca se salga */}
+          <div className="relative h-[280px] w-[280px] sm:h-[380px] sm:w-[380px]">
+            <ErrorBoundary>
+              <BurgerScene explode={explode} />
+            </ErrorBoundary>
+          </div>
+
+          <button className="rounded-full border border-white/30 px-8 py-3 font-display text-xs uppercase tracking-[0.25em] text-white transition hover:bg-white hover:text-black">
+            Ver menú
+          </button>
         </div>
 
-        {/* Modelo 3D — ocupa toda la sección, queda encima/debajo del texto
-            según el z-index; aquí va detrás para que el texto se lea primero */}
-        <div className="absolute inset-0 z-0">
-          <ErrorBoundary>
-            <BurgerScene explode={explode} />
-          </ErrorBoundary>
-        </div>
-
-        <p className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 font-display text-sm uppercase tracking-[0.3em] text-ink/50">
+        <p className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 font-display text-xs uppercase tracking-[0.3em] text-white/40">
           {explode < 0.05
             ? "Desliza para ver qué lleva dentro"
             : "Ingrediente por ingrediente, como siempre"}
