@@ -52,7 +52,7 @@ export default function BurgerScene({ explode = 0 }) {
             explode={0}
             showLabels={false}
             scale={0.92 * decoScale * SIZE}
-            position={[1.7, 0.15, -0.5]}
+            position={[1.6, 0.15, -0.5]}
           />
         </group>
 
