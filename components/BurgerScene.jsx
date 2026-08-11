@@ -24,7 +24,7 @@ export default function BurgerScene({ explode = 0 }) {
 
   // Tamaño base más grande que antes (era 0.8), sigue encogiendo un poco
   // al explotar para no salirse de pantalla.
-  const FRONT_SIZE = 1.05;
+  const FRONT_SIZE = 0.8;
   const frontScale = FRONT_SIZE - explode * 0.35;
 
   // La de la derecha ahora sí desaparece con el scroll, encogiéndose
