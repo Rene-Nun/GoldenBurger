@@ -23,11 +23,17 @@ export default function BurgerScene({ explode = 0 }) {
   const frontScale = 1 - explode * 0.42;
   const decoScale = Math.max(0, 1 - explode / 0.3);
 
+  // Mismo paso (dx, dy, dz) entre hamburguesa 1→2 y 2→3, para que el
+  // espaciado se vea parejo en todo el trío.
+  const STEP_X = 1.7;
+  const STEP_Y = 0.4;
+  const STEP_Z = -1.9;
+
   return (
     <Canvas
-      // Cámara más alta y un poco más cerca: al mirar hacia abajo se ve
-      // más la cara del pan superior, look de foto de producto.
-      camera={{ position: [0, 2.1, 6.8], fov: 28 }}
+      // Cámara mucho más elevada y más cerrada en FOV — mira más hacia
+      // abajo, así se ve más la cara del pan superior.
+      camera={{ position: [0, 3.4, 6.4], fov: 26 }}
       dpr={[1, 1.5]}
       shadows
       gl={{ toneMappingExposure: 1.1 }}
@@ -43,24 +49,23 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa de fondo — más lejos, más chica, más arriba */}
+        {/* Hamburguesa de fondo — mismo paso que 1→2, aplicado dos veces */}
         <group rotation={[-0.1, -0.25, 0]}>
           <BurgerModel
             explode={0}
             showLabels={false}
             scale={0.55 * decoScale}
-            position={[2.6, 0.75, -3.6]}
+            position={[STEP_X * 2, STEP_Y * 2, STEP_Z * 2]}
           />
         </group>
 
-        {/* Hamburguesa media — escalón intermedio, bien separada de
-            la de atrás y de la de enfrente para que no se amontonen */}
+        {/* Hamburguesa media — un paso desde la de enfrente */}
         <group rotation={[-0.1, -0.15, 0]}>
           <BurgerModel
             explode={0}
             showLabels={false}
             scale={0.78 * decoScale}
-            position={[1.7, 0.4, -1.9]}
+            position={[STEP_X, STEP_Y, STEP_Z]}
           />
         </group>
 
@@ -76,12 +81,16 @@ export default function BurgerScene({ explode = 0 }) {
           />
         </group>
 
+        {/* Sombra tinte rojo oscuro (no negro puro) para que se vea como
+            si la superficie donde reposan las hamburguesas fuera roja,
+            no una mancha genérica flotando encima del fondo */}
         <ContactShadows
           position={[0, -1, 0]}
-          opacity={0.4}
-          scale={8}
-          blur={2.5}
-          far={2}
+          opacity={0.55}
+          scale={10}
+          blur={1.6}
+          far={2.5}
+          color="#5a1613"
         />
       </Suspense>
     </Canvas>
