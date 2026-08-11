@@ -32,7 +32,7 @@ export default function BurgerScene({ explode = 0 }) {
 
   return (
     <Canvas
-      camera={{ position: [0, 3.4, 6.2], fov: 26 }}
+      camera={{ position: [0, 4.0, 6.2], fov: 26 }}
       dpr={[1, 1.5]}
       gl={{ toneMappingExposure: 1.1 }}
     >
