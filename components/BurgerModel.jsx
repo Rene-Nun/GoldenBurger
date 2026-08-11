@@ -1,18 +1,26 @@
 "use client";
 
 import { useRef } from "react";
-import { useGLTF, Html } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
+/**
+ * IMPORTANTE: los nombres de "node" (mallas) NO llevan punto (root01, root2...)
+ * pero los nombres de "material" SÍ llevan punto (root.0.1, root.2...).
+ * Por eso cada capa guarda ambos nombres por separado.
+ *
+ * Orden de apilado real, de abajo hacia arriba: pan inferior, carne, queso,
+ * salsa, cebolla, jitomate, lechuga, pan superior.
+ */
 const LAYERS = [
-  { node: "root.0.1", name: "pan inferior", offset: -1.4 },
-  { node: "root.0.5", name: "carne", offset: -1.0 },
-  { node: "root.0.3", name: "queso", offset: -0.6 },
-  { node: "root.2", name: "salsa", offset: -0.2 },
-  { node: "root.1", name: "cebolla", offset: 0.2 },
-  { node: "root.0.0", name: "jitomate", offset: 0.6 },
-  { node: "root.0.2", name: "lechuga", offset: 1.0 },
-  { node: "root.3", name: "pan superior", offset: 1.4 },
+  { node: "root01", material: "root.0.1", name: "pan inferior", offset: -1.4 },
+  { node: "root05", material: "root.0.5", name: "carne", offset: -1.0 },
+  { node: "root03", material: "root.0.3", name: "queso", offset: -0.6 },
+  { node: "root2", material: "root.2", name: "salsa", offset: -0.2 },
+  { node: "root1", material: "root.1", name: "cebolla", offset: 0.2 },
+  { node: "root00", material: "root.0.0", name: "jitomate", offset: 0.6 },
+  { node: "root02", material: "root.0.2", name: "lechuga", offset: 1.0 },
+  { node: "root3", material: "root.3", name: "pan superior", offset: 1.4 },
 ];
 
 export default function BurgerModel({ explode = 0, ...props }) {
@@ -29,44 +37,16 @@ export default function BurgerModel({ explode = 0, ...props }) {
     });
   });
 
-  // --- DEBUG TEMPORAL: imprime en pantalla los nombres reales de nodos ---
-  const nodeKeys = Object.keys(nodes);
-  const materialKeys = Object.keys(materials);
-
   return (
     <group ref={group} {...props} dispose={null}>
-      <Html center>
-        <div
-          style={{
-            background: "white",
-            color: "black",
-            padding: "12px 16px",
-            borderRadius: 8,
-            fontSize: 11,
-            fontFamily: "monospace",
-            maxWidth: "80vw",
-            whiteSpace: "pre-wrap",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-          }}
-        >
-          <strong>NODOS ({nodeKeys.length}):</strong>
-          {"\n"}
-          {nodeKeys.join("\n")}
-          {"\n\n"}
-          <strong>MATERIALES ({materialKeys.length}):</strong>
-          {"\n"}
-          {materialKeys.join("\n")}
-        </div>
-      </Html>
-
-      {LAYERS.map(({ node }, i) => {
+      {LAYERS.map(({ node, material }) => {
         const meshNode = nodes[node];
         if (!meshNode) return null;
         return (
           <mesh
             key={node}
             geometry={meshNode.geometry}
-            material={materials[node] ?? meshNode.material}
+            material={materials[material] ?? meshNode.material}
             castShadow
             receiveShadow
           />
