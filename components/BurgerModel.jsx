@@ -5,74 +5,107 @@ import { useGLTF, Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
 /**
- * IMPORTANTE: los nombres de "node" (mallas) NO llevan punto (root01, root2...)
- * pero los nombres de "material" SÍ llevan punto (root.0.1, root.2...).
+ * Cada GRUPO puede contener varios nodos del .glb que deben moverse
+ * siempre juntos como una sola pieza visual (por eso "parts" es un array).
+ * Los nombres de nodo (mesh) NO llevan punto; los de material SÍ.
  *
- * Orden de apilado real, de abajo hacia arriba: pan inferior, carne, queso,
- * salsa, cebolla, jitomate, lechuga, pan superior.
+ * Agrupación:
+ * - Pan superior: root3
+ * - Lechuga y más: root02 (lechuga) + root00 (jitomate/pedazos sueltos)
+ * - Queso y más: root03 (queso) + root2 (salsa) + root1 (cebolla)
+ * - Carne: root05
+ * - Pan inferior: root01
  *
- * Offsets reducidos a la mitad respecto a la versión original — el hero
- * ahora es un recuadro chico (280–380px), así que la explosión tiene que
- * quedarse contenida ahí y no salirse de la vista.
+ * Si al probar ves que alguna pieza se sigue separando de donde no debería,
+ * solo mueve esa línea {node, material} al array "parts" del grupo correcto.
+ *
+ * Offsets parejos: 0.4 de distancia entre cada grupo, simétrico alrededor
+ * del centro (queso y más, en offset 0).
  */
-const LAYERS = [
-  { node: "root01", material: "root.0.1", name: "Pan inferior", offset: -0.7 },
-  { node: "root05", material: "root.0.5", name: "Carne", offset: -0.5 },
-  { node: "root03", material: "root.0.3", name: "Queso", offset: -0.3 },
-  { node: "root2", material: "root.2", name: "Salsa", offset: -0.1 },
-  { node: "root1", material: "root.1", name: "Cebolla", offset: 0.1 },
-  { node: "root00", material: "root.0.0", name: "Jitomate", offset: 0.3 },
-  { node: "root02", material: "root.0.2", name: "Lechuga", offset: 0.5 },
-  { node: "root3", material: "root.3", name: "Pan superior", offset: 0.7 },
+const GROUPS = [
+  {
+    name: "Pan superior",
+    offset: 0.8,
+    parts: [{ node: "root3", material: "root.3" }],
+  },
+  {
+    name: "Lechuga y más",
+    offset: 0.4,
+    parts: [
+      { node: "root02", material: "root.0.2" },
+      { node: "root00", material: "root.0.0" },
+    ],
+  },
+  {
+    name: "Queso y más",
+    offset: 0,
+    parts: [
+      { node: "root03", material: "root.0.3" },
+      { node: "root2", material: "root.2" },
+      { node: "root1", material: "root.1" },
+    ],
+  },
+  {
+    name: "Carne",
+    offset: -0.4,
+    parts: [{ node: "root05", material: "root.0.5" }],
+  },
+  {
+    name: "Pan inferior",
+    offset: -0.8,
+    parts: [{ node: "root01", material: "root.0.1" }],
+  },
 ];
 
 export default function BurgerModel({ explode = 0, ...props }) {
   const { nodes, materials } = useGLTF("/models/burger.glb");
-  // Un ref por capa (mesh + etiqueta juntos)
-  const layerRefs = useRef([]);
+  // Un ref por grupo (no por mesh individual) — así todas las partes
+  // dentro de un grupo se mueven pegadas, como una sola pieza
+  const groupRefs = useRef([]);
 
   useFrame(() => {
-    layerRefs.current.forEach((el, i) => {
+    groupRefs.current.forEach((el, i) => {
       if (!el) return;
-      const layer = LAYERS[i];
-      const targetY = layer.offset * explode;
+      const group = GROUPS[i];
+      const targetY = group.offset * explode;
       el.position.y += (targetY - el.position.y) * 0.1;
     });
   });
 
-  // Las etiquetas empiezan a aparecer después de un pequeño umbral de scroll,
-  // y llegan a opacidad completa a los ~35% del recorrido.
   const labelOpacity = Math.min(1, Math.max(0, (explode - 0.05) / 0.3));
 
   return (
     <group {...props} dispose={null}>
-      {LAYERS.map((layer, i) => {
-        const meshNode = nodes[layer.node];
-        if (!meshNode) return null;
-        return (
-          <group key={layer.node} ref={(el) => (layerRefs.current[i] = el)}>
-            <mesh
-              geometry={meshNode.geometry}
-              material={materials[layer.material] ?? meshNode.material}
-              castShadow
-              receiveShadow
-            />
-            {labelOpacity > 0.01 && (
-              <Html position={[1.6, 0, 0]} center={false} style={{ pointerEvents: "none" }}>
-                <div
-                  className="flex items-center gap-2 whitespace-nowrap"
-                  style={{ opacity: labelOpacity, transition: "opacity 0.2s linear" }}
-                >
-                  <span className="h-px w-8 bg-white/40" />
-                  <span className="font-display text-xs uppercase tracking-[0.2em] text-white/70">
-                    {layer.name}
-                  </span>
-                </div>
-              </Html>
-            )}
-          </group>
-        );
-      })}
+      {GROUPS.map((group, i) => (
+        <group key={group.name} ref={(el) => (groupRefs.current[i] = el)}>
+          {group.parts.map(({ node, material }) => {
+            const meshNode = nodes[node];
+            if (!meshNode) return null;
+            return (
+              <mesh
+                key={node}
+                geometry={meshNode.geometry}
+                material={materials[material] ?? meshNode.material}
+                castShadow
+                receiveShadow
+              />
+            );
+          })}
+          {labelOpacity > 0.01 && (
+            <Html position={[1.2, 0, 0]} center={false} style={{ pointerEvents: "none" }}>
+              <div
+                className="flex items-center gap-2 whitespace-nowrap"
+                style={{ opacity: labelOpacity, transition: "opacity 0.2s linear" }}
+              >
+                <span className="h-px w-8 bg-white/40" />
+                <span className="font-display text-xs uppercase tracking-[0.2em] text-white/70">
+                  {group.name}
+                </span>
+              </div>
+            </Html>
+          )}
+        </group>
+      ))}
     </group>
   );
 }
