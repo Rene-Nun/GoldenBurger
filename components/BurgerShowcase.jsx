@@ -65,13 +65,16 @@ export default function BurgerShowcase() {
   return (
     <section ref={containerRef} className="relative h-[300vh]">
       <div className="sticky top-0 h-screen overflow-hidden bg-black">
-        {/* Franja diagonal roja de fondo — ajusta los porcentajes del
-            clip-path si quieres mover el ángulo o dónde empieza/termina */}
+        {/* Franja diagonal roja de fondo — dirección invertida respecto a
+            la versión anterior y corrida más hacia la derecha, para que
+            la hamburguesa izquierda quede en el cruce negro/rojo.
+            Ajusta los dos porcentajes para mover el ángulo (arriba vs
+            abajo) o la posición general (subiendo/bajando ambos). */}
         <div
           className="pointer-events-none absolute inset-0 z-0"
           style={{
             backgroundColor: "#BD2F29",
-            clipPath: "polygon(38% 0%, 100% 0%, 100% 100%, 22% 100%)",
+            clipPath: "polygon(48% 0%, 100% 0%, 100% 100%, 68% 100%)",
           }}
         />
 
