@@ -25,7 +25,7 @@ export default function BurgerScene({ explode = 0 }) {
 
   // Multiplicador global de tamaño — no toca posición ni rotación,
   // solo achica ambos modelos para que quepan mejor en pantalla.
-  const SIZE = 0.7;
+  const SIZE = 0.8;
 
   return (
     <Canvas
