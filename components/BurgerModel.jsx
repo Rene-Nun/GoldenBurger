@@ -4,11 +4,6 @@ import { useRef } from "react";
 import { useGLTF, Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
-/**
- * Confirmado visualmente con el modo debug de colores — cada grupo mueve
- * junto varios nodos del .glb para que se vean como una sola pieza.
- * OJO: root02/root03 (con cero) y root2/root3 (sin cero) son nodos distintos.
- */
 const GROUPS = [
   {
     name: "Pan superior",
@@ -44,7 +39,20 @@ const GROUPS = [
   },
 ];
 
-export default function BurgerModel({ explode = 0, ...props }) {
+/**
+ * axisX/axisY controlan la dirección de la explosión:
+ * - axisY alto, axisX en 0 = solo vertical (como antes)
+ * - axisX y axisY ambos activos = diagonal (lo que pediste ahora)
+ * showLabels: false para las hamburguesas decorativas de fondo, que
+ * nunca explotan y no necesitan etiquetas de ingrediente.
+ */
+export default function BurgerModel({
+  explode = 0,
+  axisX = 0.6,
+  axisY = 1,
+  showLabels = true,
+  ...props
+}) {
   const { nodes, materials } = useGLTF("/models/burger.glb");
   const groupRefs = useRef([]);
 
@@ -52,12 +60,16 @@ export default function BurgerModel({ explode = 0, ...props }) {
     groupRefs.current.forEach((el, i) => {
       if (!el) return;
       const group = GROUPS[i];
-      const targetY = group.offset * explode;
+      const targetX = group.offset * axisX * explode;
+      const targetY = group.offset * axisY * explode;
+      el.position.x += (targetX - el.position.x) * 0.1;
       el.position.y += (targetY - el.position.y) * 0.1;
     });
   });
 
-  const labelOpacity = Math.min(1, Math.max(0, (explode - 0.05) / 0.3));
+  const labelOpacity = showLabels
+    ? Math.min(1, Math.max(0, (explode - 0.05) / 0.3))
+    : 0;
 
   return (
     <group {...props} dispose={null}>
