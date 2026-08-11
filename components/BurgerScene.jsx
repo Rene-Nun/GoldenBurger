@@ -27,9 +27,6 @@ export default function BurgerScene({ explode = 0 }) {
 
   return (
     <Canvas
-      // Bajé la cámara respecto a la versión anterior (era 5.0) — así
-      // el giro diagonal sí se alcanza a ver, sin perder demasiado la
-      // vista de la cara del pan.
       camera={{ position: [0, 3.4, 6.2], fov: 26 }}
       dpr={[1, 1.5]}
       gl={{ toneMappingExposure: 1.1 }}
@@ -40,10 +37,9 @@ export default function BurgerScene({ explode = 0 }) {
       <Environment preset="studio" resolution={128} background={false} />
 
       <Suspense fallback={<LoadingFallback />}>
-        {/* Hamburguesa IZQUIERDA — mismo z que la derecha (evita el
-            desnivel óptico), gira hacia su izquierda, mucho más cerca
-            de la de enfrente ahora */}
-        <group rotation={[-0.15, -0.3, 0]}>
+        {/* Hamburguesa IZQUIERDA — rotación en Z (tercer valor) inclina
+            en diagonal hacia su izquierda, como recostada */}
+        <group rotation={[-0.15, 0, -0.25]}>
           <BurgerModel
             explode={0}
             showLabels={false}
@@ -52,9 +48,8 @@ export default function BurgerScene({ explode = 0 }) {
           />
         </group>
 
-        {/* Hamburguesa DERECHA — al frente, gira hacia su derecha,
-            la que responde al scroll */}
-        <group rotation={[-0.15, 0.3, 0]}>
+        {/* Hamburguesa DERECHA — rotación en Z inclina hacia su derecha */}
+        <group rotation={[-0.15, 0, 0.25]}>
           <BurgerModel
             explode={explode}
             axisX={0.6}
